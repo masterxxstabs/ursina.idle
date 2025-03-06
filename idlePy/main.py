@@ -5,7 +5,7 @@ window.color = color._20
 
 gold = 0
 has_gold_gen = False
-gold_gens = 0
+gold_gens = 5
 gold_gen_price = 10
 rebirths = 0
 rebirth_price = 100
@@ -13,7 +13,6 @@ gold_per_sec = 1 + rebirths
 gold_per_click = 1
 counter = Text(text=f'<gold>Cheese\n<white>--------\n<azure>{gold}', y=.25, z=-1, scale=2, origin=(0, 0), background=True)
 button = Button(text='+', color=color.azure, scale=.125)
-
 
 def button_click():
     global gold
@@ -23,12 +22,13 @@ def button_click():
 button.on_click = button_click
 
 button_2 = Button(text=f'{gold_gen_price}', cost=gold_gen_price, x=.2, scale=.125, color=color.dark_gray, disabled=True)
-button_2.tooltip = Tooltip(
-    f'<gold> Gold Generator\n<default>Earn 1 gold every second. \nCost {button_2.cost} * 2 per purchase.')
+button_2.tooltip = Tooltip(f'<gold> cheese Generator 1\n<default>Earn 1 Cheese every second. \nCost {button_2.cost} * 2 per purchase.')
+
+cheese_gen_2 = Button(text=f'', cost=5, x=-.2, scale=.125, color=color.dark_gray, disabled= True)
+cheese_gen_2.tooltip = Tooltip(f'<gold> Cheese Generator 2\n<default>Earn 2 Cheese every second. \nCost {cheese_gen_2.cost} * 2 per purchase.')
 
 rebirth_button = Button(text=f'{rebirth_price}', cost=rebirth_price, x=.4, scale=.125, color=color.pink, disabled=True)
 rebirth_button.tooltip = Tooltip(f'<blue> Reset\n<default>Rest your progress but gain perm stats. \n {rebirth_price}')
-
 
 def buy_auto_gold():
     global gold
@@ -44,9 +44,23 @@ def buy_auto_gold():
         gold_gens += 1
         invoke(auto_generate_gold, 1, 1)
 
-
 button_2.on_click = buy_auto_gold
 
+def auto_buy_gold_2():
+    global gold
+    global gold_gens
+    global has_gold_gen
+
+    if gold_gens >= cheese_gen_2.cost:
+        gold_gens -= cheese_gen_2.cost
+        has_gold_gen = True
+        cheese_gen_2.cost *= 2
+        cheese_gen_2.text = str(cheese_gen_2.cost)
+        counter.text = f'<gold>Cheese\n<white>--------\n<azure>{gold}'
+        gold_gens += 1
+        invoke(auto_generate_gold, 1, 1)
+
+cheese_gen_2.on_click = auto_buy_gold_2
 
 def buy_rebirth():
     global gold
@@ -70,9 +84,7 @@ def buy_rebirth():
         counter.text = f'<gold>Cheese\n<white>--------\n<azure>{gold}'
         button_2.text = str(gold_gen_price)
 
-
 rebirth_button.on_click = buy_rebirth
-
 
 def auto_generate_gold(value=1, interval=1):
     global gold
@@ -86,8 +98,6 @@ def auto_generate_gold(value=1, interval=1):
         invoke(auto_generate_gold, value, delay=interval)
 
 rebirths_counter = Text(text=f'<azure>Rebirths <default>: <gold>{rebirths}<azure>\nClicks Per Click <default>: <gold>{gold_per_click}', position=window.top_left)
-
-
 
 def update():
     global gold
@@ -103,10 +113,11 @@ def update():
             b.disabled = True
             b.color = color.red
 
-        if gold_gens == 5:
-            rebirth_button.text = str(rebirth_price)
+    for b in (cheese_gen_2, ):
+        if gold_gens >= b.cost:
+            b.disabled = False
+            b.color = color.green
         else:
-            rebirth_button.disabled = True
-            rebirth_button.text = 'locked'
-
+            b.disabled = True
+            b.color = color.red
 app.run()
