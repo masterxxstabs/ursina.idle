@@ -7,14 +7,20 @@ gold = 0
 has_gold_gen = False
 gold_gens = 5
 gold_gen_price = 10
+cheese_gen_price_2 = 5
 rebirths = 0
 rebirth_price = 100
 gold_per_sec = 1 + rebirths
 gold_per_click = 1
 counter = Text(text=f'<gold>Cheese\n<white>--------\n<azure>{gold}', y=.25, z=-1, scale=2, origin=(0, 0), background=True)
 button = Button(text='+', color=color.azure, scale=.125)
+button.on_mouse_enter = Func(setattr, button, 'text', 'Fart')
+button.on_mouse_exit = Func(setattr, button, 'text', '+')
 
 def button_click():
+    if mouse.right:
+        show_context_menu()
+
     global gold
     gold += gold_per_click
     counter.text = f'<gold>Cheese\n<white>--------\n<azure>{gold}'
@@ -24,7 +30,7 @@ button.on_click = button_click
 button_2 = Button(text=f'{gold_gen_price}', cost=gold_gen_price, x=.2, scale=.125, color=color.dark_gray, disabled=True)
 button_2.tooltip = Tooltip(f'<gold> cheese Generator 1\n<default>Earn 1 Cheese every second. \nCost {button_2.cost} * 2 per purchase.')
 
-cheese_gen_2 = Button(text=f'', cost=5, x=-.2, scale=.125, color=color.dark_gray, disabled= True)
+cheese_gen_2 = Button(text=f'{cheese_gen_price_2}', cost=cheese_gen_price_2, x=-.2, scale=.125, color=color.dark_gray, disabled= True)
 cheese_gen_2.tooltip = Tooltip(f'<gold> Cheese Generator 2\n<default>Earn 2 Cheese every second. \nCost {cheese_gen_2.cost} * 2 per purchase.')
 
 rebirth_button = Button(text=f'{rebirth_price}', cost=rebirth_price, x=.4, scale=.125, color=color.pink, disabled=True)
@@ -98,6 +104,18 @@ def auto_generate_gold(value=1, interval=1):
         invoke(auto_generate_gold, value, delay=interval)
 
 rebirths_counter = Text(text=f'<azure>Rebirths <default>: <gold>{rebirths}<azure>\nClicks Per Click <default>: <gold>{gold_per_click}', position=window.top_left)
+
+def show_context_menu():
+    menu_options = ['Upgrade Click Power']
+    context_menu = Entity(parent=camera.ui, model='quad', scale=(0.2, 0.3), color=color.gray, position=mouse.position)
+
+    for i, option in enumerate(menu_options):
+        btn = Button(text=option, parent=context_menu, scale=(0.9, 0.2), position=(0, 0.3 - i * 0.2))
+        btn.on_click = Func(on_menu_option_click, option)
+
+def on_menu_option_click(context_menu, option):
+    print(f'Selected: {option}')
+    destroy(context_menu)
 
 def update():
     global gold
