@@ -1,4 +1,7 @@
 from ursina import *
+import json
+from Data import *
+
 
 app = Ursina()
 window.color = color._20
@@ -7,23 +10,28 @@ gold = 0
 has_gold_gen = False
 gold_gens = 5
 gold_gen_price = 10
+context_menu = None
 cheese_gen_price_2 = 5
 rebirths = 0
+datajson = "idlePy/Data/idleData.json"
 rebirth_price = 100
 gold_per_sec = 1 + rebirths
 gold_per_click = 1
 counter = Text(text=f'<gold>Cheese\n<white>--------\n<azure>{gold}', y=.25, z=-1, scale=2, origin=(0, 0), background=True)
+
 button = Button(text='+', color=color.azure, scale=.125)
 button.on_mouse_enter = Func(setattr, button, 'text', 'Fart')
 button.on_mouse_exit = Func(setattr, button, 'text', '+')
 
 def button_click():
-    if mouse.right:
+    if held_keys['left mouse']:
+        global gold
+        gold += gold_per_click
+        counter.text = f'<gold>Cheese\n<white>--------\n<azure>{gold}'
+        print('button left clicked')
+    elif held_keys['right mouse']:
         show_context_menu()
-
-    global gold
-    gold += gold_per_click
-    counter.text = f'<gold>Cheese\n<white>--------\n<azure>{gold}'
+        print('Button right clicked')
 
 button.on_click = button_click
 
@@ -106,22 +114,38 @@ def auto_generate_gold(value=1, interval=1):
 rebirths_counter = Text(text=f'<azure>Rebirths <default>: <gold>{rebirths}<azure>\nClicks Per Click <default>: <gold>{gold_per_click}', position=window.top_left)
 
 def show_context_menu():
-    menu_options = ['Upgrade Click Power']
+    global  context_menu
+    if context_menu:
+        destroy(context_menu)
+
+    menu_options = ['Option 1', 'Option 2', 'Option 3']
     context_menu = Entity(parent=camera.ui, model='quad', scale=(0.2, 0.3), color=color.gray, position=mouse.position)
 
     for i, option in enumerate(menu_options):
         btn = Button(text=option, parent=context_menu, scale=(0.9, 0.2), position=(0, 0.3 - i * 0.2))
         btn.on_click = Func(on_menu_option_click, option)
 
-def on_menu_option_click(context_menu, option):
+def on_menu_option_click(option):
     print(f'Selected: {option}')
     destroy(context_menu)
+
+def read_json(dataJson):
+    with open(dataJson, 'r') as file:
+        try:
+            data = json.load(file)
+            print(json.dumps(data, indent=4))
+        except json.JSONDecodeError as e:
+            print(f'Error Reading json file: ')
 
 def update():
     global gold
     global rebirths
     global rebirth_price
     global has_gold_gen
+
+    if mouse.right:
+        show_context_menu()
+        print('mouse right clicked')
 
     for b in (button_2, rebirth_button):
         if gold >= b.cost:
