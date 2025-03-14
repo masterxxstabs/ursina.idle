@@ -1,6 +1,6 @@
 from ursina import *
-import json
-from Data import *
+from Data.dataHandler import read_json_file, read_json_array
+from idlePy.Data.dataHandler import read_json_array
 
 app = Ursina()
 window.color = color._20
@@ -17,6 +17,15 @@ rebirth_price = 100
 gold_per_sec = 1 + rebirths
 gold_per_click = 1
 counter = Text(text=f'<gold>Cheese\n<white>--------\n<azure>{gold}', y=.25, z=-1, scale=2, origin=(0, 0), background=True)
+
+file_path = 'Data/idleData.json'
+
+json_data = read_json_file(file_path)
+
+key = 'character'
+json_Array = read_json_array(json_data, key)
+
+print(json_Array)
 
 button = Button(text='+', color=color.azure, scale=.125)
 button.on_mouse_enter = Func(setattr, button, 'text', 'Fart')

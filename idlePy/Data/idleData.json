@@ -1,8 +1,10 @@
-[
- {
-  "name": "",
-  "cash": 0,
-  "dob": "",
-  "health": 100
- }
-]
+{
+ "character": [
+  {
+   "name": "",
+   "dob": "",
+   "cash": 0,
+   "age": 0
+  }
+ ]
+}

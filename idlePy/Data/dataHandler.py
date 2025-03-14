@@ -1,13 +1,16 @@
 import json
 
-jsonData = open('idleData.json')
-jsonArray = json.load(jsonData)
-store_list = []
+def read_json_file(file_path):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    return data
 
-for item in jsonArray:
-    character_details = {"name":None, "cash":None}
-    character_details['name'] = item['name']
-    character_details['cash'] = item['cash']
-    store_list.append(character_details)
+def write_json_file(file_path, data):
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4)
 
-print(store_list)
+def read_json_array(json_data, key):
+    return json_data.get(key, [])
+
+def write_json_array(json_data, key, array):
+    json_data[key] = array
