@@ -2,7 +2,6 @@ from ursina import *
 import json
 from Data import *
 
-
 app = Ursina()
 window.color = color._20
 
@@ -128,14 +127,6 @@ def show_context_menu():
 def on_menu_option_click(option):
     print(f'Selected: {option}')
     destroy(context_menu)
-
-def read_json(dataJson):
-    with open(dataJson, 'r') as file:
-        try:
-            data = json.load(file)
-            print(json.dumps(data, indent=4))
-        except json.JSONDecodeError as e:
-            print(f'Error Reading json file: ')
 
 def update():
     global gold

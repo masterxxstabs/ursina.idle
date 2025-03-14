@@ -1,3 +1,8 @@
-{
- "character":{"name":"", "age":0, "city":""}
-}
+[
+ {
+  "name": "",
+  "cash": 0,
+  "dob": "",
+  "health": 100
+ }
+]
